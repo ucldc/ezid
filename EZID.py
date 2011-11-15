@@ -69,8 +69,8 @@ def formatAnvlFromDict(d):
     '''Produce anvl formatted text from a dict of name value pairs.
     Values should be simple data types
 
-    >>> formatAnvlFromDict({'dc.title':'test', 'dc.creator':'mer',})
-    'dc.creator: mer\\ndc.title: test'
+    >>> formatAnvlFromDict({'dc.title':'test title', 'dc.creator':'mer',})
+    'dc.creator: mer\\ndc.title: test title'
     '''
     r = []
     for k, v in d.items():
@@ -80,6 +80,12 @@ def formatAnvlFromDict(d):
     return "\n".join(r)
 
 def formatAnvlFromList (l):
+    '''Produce anvl formatted text from a list of name-value pairs.
+    Values should be simple data types.
+    >>> formatAnvlFromList( ['dc.title', 'test title', 'dc.creator', 'mer'])
+    'dc.title: test title\\ndc.creator: mer'
+    '''
+
     r = []
     for i in range(0, len(l), 2):
         k = re.sub("[%:\r\n]", lambda c: "%%%02X" % ord(c.group(0)), l[i])
@@ -122,47 +128,6 @@ class EZIDClient(object):
     Traceback (most recent call last):
         ...
     HTTPError: HTTP Error 401: UNAUTHORIZED
-    >>> import os
-    >>> ez=EZIDClient(SERVER, credentials={'username':os.environ['EZID_USER'], 'password':os.environ['EZID_PASS']})
-    >>> sid = ez.login()
-    >>> ark = ez.mint('ark:/99999/fk4', {'_profile':'dc',})
-    >>> resp = ez.update(ark, {'dc.title':'Test Title', 'dc.creator':'Test Creator', 'dc.publisher':'CDL', 'dc.date':'1965'})
-    >>> resp = ez.view(ark)
-    >>> print resp # doctest:+ELLIPSIS
-    success: ark:/99999/...
-    _updated: ...
-    dc.date: 1965
-    _target: http://n2t.net/ezid/id/ark:/99999/...
-    _profile: dc
-    dc.publisher: CDL
-    _ownergroup: cdldsc
-    _owner: cdldsc
-    dc.creator: Test Creator
-    _created: ...
-    _status: public
-    dc.title: Test Title
-    <BLANKLINE>
-    >>> x=ez.logout()
-    >>> print x
-    success: authentication credentials flushed
-    <BLANKLINE>
-    >>> ez=EZIDClient(SERVER, proxy={'http':'http://localhost:8080', 'https':'https://localhost:8080'})
-    >>> info = ez.view('ark:/13030/c88s4n09')
-    >>> for x in info.split('\\n'):
-    ...     print x
-    success: ark:/13030/c88s4n09
-    _updated: 1319652711
-    dc.date: 1957
-    _target: http://content.cdlib.org/ark:/13030/c88s4n09/
-    _profile: dc
-    dc.publisher: San Jose State University Special Collections & Archives
-    _ownergroup: cdldsc
-    _owner: cdldsc
-    dc.creator: Wang Shifu
-    _created: 1302192449
-    _status: public
-    dc.title: "The Romance of the West Chamber," a Classic of Chinese Literature
-    <BLANKLINE>
     '''
     def __init__(self, server=SERVER, proxy=None, credentials=None, session_id=None):
         self._proxy = proxy # dict of http, https proxies
@@ -206,7 +171,8 @@ class EZIDClient(object):
         '''View an id. If id is public, no login or session id required
         for public ids.
         '''
-        request = urllib2.Request("%s/id/%s" % (self._server, identifier))
+        url = "%s/id/%s" % (self._server, identifier)
+        request = urllib2.Request(url)
         return self._get_request(request)
 
     def login(self):
