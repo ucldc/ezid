@@ -8,9 +8,9 @@ Following the samples from: http://n2t.net/ezid/doc/apidoc.html
 '''
 
 __author__ = "Mark Redar"
-__copyright__ = "Copyright 2011, UC Regents"
+__copyright__ = "Copyright 2011, The Regents of the University of California"
 __credits__ = ["Greg Janee", ]
-__license__ = "GPL"
+__license__ = "BSD"
 __version__ = "0.1"
 __maintainer__ = "Mark Redar"
 __email__ = "mark.redar@ucop.edu"
