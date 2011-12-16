@@ -26,6 +26,7 @@ def save_new_id(ark):
 )
 def main(number, shoulder=None, username=None, password=None):
     if not shoulder or not username or not password:
+        HOME = os.environ['HOME']
         config_file= os.environ.get('DATABASES_XML_FILE', HOME + '/.databases.xml')
         dbs = read_config(config_file=config_file)
         USERNAME = dbs['EZID']['USER']
