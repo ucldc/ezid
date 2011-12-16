@@ -14,13 +14,6 @@ import plac
 
 EZID_index = os.path.join(os.environ['HOME'], 'indexes/EZID.txt')
 
-CONFIG_FILE = os.environ.get('DATABASES_XML_FILE', HOME + '/.databases.xml')
-dbs = read_config(config_file=CONFIG_FILE)
-
-USERNAME = dbs['EZID']['USER']
-PASSWORD = dbs['EZID']['PASSWORD']
-SHOULDER = dbs['EZID']['SHOULDER']
-
 def save_new_id(ark):
     '''Save the ark to the index, just a text file for now
     '''
@@ -31,11 +24,20 @@ def save_new_id(ark):
     number=("Number of new ARKs to mint", 'positional', None, int),
     shoulder=("EZID shoulder to mint from", 'option', None, str),
 )
-def main(number, shoulder=SHOULDER):
-    ezid = EZIDClient(credentials=dict(username=USERNAME, password=PASSWORD))
+def main(number, shoulder=None, username=None, password=None):
+    if not shoulder or not username or not password:
+        config_file= os.environ.get('DATABASES_XML_FILE', HOME + '/.databases.xml')
+        dbs = read_config(config_file=config_file)
+        USERNAME = dbs['EZID']['USER']
+        PASSWORD = dbs['EZID']['PASSWORD']
+        SHOULDER = dbs['EZID']['SHOULDER']
+        shoulder = shoulder if shoulder else SHOULDER
+        username = username if username else USERNAME
+        password = password if password else PASSWORD
+    ezid = EZIDClient(credentials=dict(username=username, password=password))
     new_ids = []
     for x in range(0, number):
-        ez = ezid.mint(shoulder=SHOULDER, data={'_profile':'dc',})
+        ez = ezid.mint(shoulder=shoulder, data={'_profile':'dc',})
         save_new_id(ez)
         new_ids.append(ez)
     return new_ids 
