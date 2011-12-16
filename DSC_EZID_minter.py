@@ -14,7 +14,8 @@ import plac
 
 EZID_index = os.path.join(os.environ['HOME'], 'indexes/EZID.txt')
 
-dbs = read_config()
+CONFIG_FILE = os.environ.get('DATABASES_XML_FILE', HOME + '/.databases.xml')
+dbs = read_config(config_file=CONFIG_FILE)
 
 USERNAME = dbs['EZID']['USER']
 PASSWORD = dbs['EZID']['PASSWORD']
