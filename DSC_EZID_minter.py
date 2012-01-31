@@ -23,8 +23,9 @@ def save_new_id(ark):
 @plac.annotations(
     number=("Number of new ARKs to mint", 'positional', None, int),
     shoulder=("EZID shoulder to mint from", 'option', None, str),
+    verbose=("Print each id when retrieved", 'flag', 'v')
 )
-def main(number, shoulder=None, username=None, password=None):
+def main(number, shoulder=None, username=None, password=None, verbose=False):
     if not shoulder or not username or not password:
         HOME = os.environ['HOME']
         config_file= os.environ.get('DATABASES_XML_FILE', HOME + '/.databases.xml')
@@ -41,6 +42,8 @@ def main(number, shoulder=None, username=None, password=None):
         ez = ezid.mint(shoulder=shoulder, data={'_profile':'dc',})
         save_new_id(ez)
         new_ids.append(ez)
+        if verbose:
+            print ez
     return new_ids 
 
 if __name__=='__main__':
