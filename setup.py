@@ -8,6 +8,7 @@ setup(name='EZID',
       author="Mark Redar",
       author_email="mark.redar@ucop.edu",
       url="http://bitbucket.org/mredar/EZID",
-      py_modules = ['EZID']
+      py_modules = ['EZID'],
+      scripts=['DSC_EZID_minter.py',]
       )
 
