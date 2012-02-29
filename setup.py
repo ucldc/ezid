@@ -7,8 +7,17 @@ setup(name='EZID',
       description="EZID api 2.0 library",
       author="Mark Redar",
       author_email="mark.redar@ucop.edu",
-      url="http://bitbucket.org/mredar/EZID",
+      url="https://bitbucket.org/mredar/ezid",
       py_modules = ['EZID'],
-      scripts=['DSC_EZID_minter.py',]
+      scripts=['DSC_EZID_minter.py',],
+      classifiers = [
+          "Development Status :: 3 - Alpha",
+          "Environment :: Console",
+          "Intended Audience :: Developers",
+          "Intended Audience :: End Users/Desktop",
+          "Topic :: Internet",
+          "Topic :: Software Development :: Libraries :: Python Modules",
+          "Topic :: Utilities",
+      ],
       )
 
