@@ -25,7 +25,7 @@ def save_new_id(ark):
     shoulder=("EZID shoulder to mint from", 'option', None, str),
     verbose=("Print each id when retrieved", 'flag', 'v')
 )
-def main(number, shoulder=None, username=None, password=None, verbose=False):
+def main(number, shoulder=None, username=None, password=None, verbose=False, metadata=None):
     if not shoulder or not username or not password:
         HOME = os.environ['HOME']
         config_file= os.environ.get('DATABASES_XML_FILE', HOME + '/.databases.xml')
@@ -39,7 +39,9 @@ def main(number, shoulder=None, username=None, password=None, verbose=False):
     ezid = EZIDClient(credentials=dict(username=username, password=password))
     new_ids = []
     for x in range(0, number):
-        ez = ezid.mint(shoulder=shoulder, data={'_profile':'dc',})
+        if not metadata:
+            metadata = {'_profile':'dc',}
+        ez = ezid.mint(shoulder=shoulder, data=metadata)
         save_new_id(ez)
         new_ids.append(ez)
         if verbose:
