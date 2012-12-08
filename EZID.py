@@ -31,6 +31,7 @@ operations = {
     "create" : lambda l: l%2 == 1,
     "view" : 1,
     "update" : lambda l: l%2 == 1,
+    "delete" : lambda l: l%2 == 1,
     "login" : 0,
     "logout" : 0
 }
@@ -47,6 +48,7 @@ _usageText = """Usage: client credentials operation...
         c[reate] identifier [label value label value ...]
         v[iew] identifier
         u[pdate] identifier [label value label value ...]
+        d[elete] identifier
         login
         logout
 """
@@ -160,7 +162,11 @@ class EZIDClient(object):
 
     def _get_request(self, request, login=False):
         if self._cookie: request.add_header("Cookie", self._cookie)
-        c = self._opener.open(request)
+        try:
+            c = self._opener.open(request)
+        except urllib2.HTTPError as e:
+            print  e.read()
+            raise
         output = c.read()
         if not output.endswith("\n"): output += "\n"
         if login:
@@ -220,6 +226,14 @@ class EZIDClient(object):
             request.add_data(formatAnvlFromDict(data).encode("UTF-8"))
         return self._get_request(request).replace('success: ','').strip()
 
+    def delete(self, identifier):
+        if not self.session_id:
+            self.session_id = self.login()
+        request = urllib2.Request("%s/id/%s" % (self._server, identifier))
+        request.get_method = lambda: "DELETE"
+        request.add_header("Content-Type", "text/plain; charset=UTF-8")
+        return self._get_request(request)
+
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Begin command line code
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -262,6 +276,8 @@ def main(argvin=sys.argv):
         elif operation == 'update':
             if data:
                 print ezid.update(identifier, data)
+        elif operation == 'delete':
+            print ezid.delete(identifier)
         elif operation == 'create':
             print ezid.create(identifier, data)    
         elif operation == 'mint':
