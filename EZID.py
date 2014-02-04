@@ -4,7 +4,7 @@
 
 Can use this as a client command line program or pull the EZIDClient object
 into other programs
-Following the samples from: http://n2t.net/ezid/doc/apidoc.html
+Following the samples from: http://ezid.cdlib.org/doc/apidoc.html
 '''
 
 __author__ = "Mark Redar"
@@ -23,7 +23,7 @@ import urllib2
 
 __all__=('EZIDClient', 'formatAnvlFromDict', 'formatAnvlFromList')
 
-SERVER = "http://n2t.net/ezid"
+SERVER = "http://ezid.cdlib.org"
 
 operations = {
     # operation : number of arguments
@@ -118,6 +118,7 @@ class EZIDClient(object):
     _ownergroup: cdldsc
     _owner: cdldsc
     dc.creator: Wang Shifu
+    _export: yes
     _created: 1302192449
     _status: public
     dc.title: "The Romance of the West Chamber," a Classic of Chinese Literature

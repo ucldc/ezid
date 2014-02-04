@@ -9,7 +9,7 @@ You'll need to set up a proxy and change the settings below to match the proxy.
 
     >>> import os
     >>> from EZID import EZIDClient
-    >>> SERVER = "http://n2t.net/ezid"
+    >>> SERVER = "http://ezid.cdlib.org"
     >>> proxy_http = os.environ.get('EZID_PROXY_HTTP', 'http://localhost:8000')
     >>> proxy_https = os.environ.get('EZID_PROXY_HTTPS', 'https://localhost:8000')
     >>> proxy = dict(http=proxy_http, https=proxy_https)

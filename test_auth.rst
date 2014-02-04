@@ -6,7 +6,7 @@ Require setting of environment variables EZID_USER and EZID_PWD
 
     >>> import os
     >>> from EZID import EZIDClient
-    >>> SERVER = "http://n2t.net/ezid"
+    >>> SERVER = "http://ezid.cdlib.org"
     >>> ez=EZIDClient(SERVER, credentials={'username':os.environ['EZID_USER'], 'password':os.environ['EZID_PWD']})
     >>> sid = ez.login()
     >>> ark = ez.mint('ark:/99999/fk4', {'_profile':'dc',})
@@ -16,7 +16,7 @@ Require setting of environment variables EZID_USER and EZID_PWD
     success: ark:/99999/...
     _updated: ...
     dc.date: 1965
-    _target: http://n2t.net/ezid/id/ark:/99999/...
+    _target: http://ezid.cdlib.org/id/ark:/99999/...
     _profile: dc
     dc.publisher: CDL
     _ownergroup: cdldsc
