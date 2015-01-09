@@ -44,6 +44,9 @@ def main(number, shoulder=None, username=None, password=None, verbose=False, met
         ez = ezid.mint(shoulder=shoulder, data=metadata)
         save_new_id(ez)
         new_ids.append(ez)
+        metadata['_target'] = 'http://content.cdlib.org/'+ez
+        resp = ezid.update(ez, metadata)
+        print resp
         if verbose:
             print ez
     return new_ids 
