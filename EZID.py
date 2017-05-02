@@ -4,7 +4,7 @@
 
 Can use this as a client command line program or pull the EZIDClient object
 into other programs
-Following the samples from: http://ezid.cdlib.org/doc/apidoc.html
+Following the samples from: https://ezid.cdlib.org/doc/apidoc.html
 '''
 
 __author__ = "Mark Redar"
@@ -23,7 +23,7 @@ import urllib2
 
 __all__=('EZIDClient', 'formatAnvlFromDict', 'formatAnvlFromList')
 
-SERVER = "http://ezid.cdlib.org"
+SERVER = "https://ezid.cdlib.org"
 
 operations = {
     # operation : number of arguments
@@ -185,14 +185,14 @@ class EZIDClient(object):
     def login(self):
         '''Login, caching session id
         '''
-        request = urllib2.Request("%s/%s" % (self._server.replace('http:', 'https:'), 'login'))
+        request = urllib2.Request("%s/%s" % (self._server, 'login'))
         self.session_id = self._get_request(request, login=True)
         return self.session_id
 
     def logout(self):
         '''logout, caching session id
         '''
-        request = urllib2.Request("%s/%s" % (self._server.replace('http:', 'https:'), 'logout'))
+        request = urllib2.Request("%s/%s" % (self._server, 'logout'))
         self.session_id = self._get_request(request)
         return self.session_id
 
@@ -280,7 +280,7 @@ def main(argvin=sys.argv):
         elif operation == 'delete':
             print ezid.delete(identifier)
         elif operation == 'create':
-            print ezid.create(identifier, data)    
+            print ezid.create(identifier, data)
         elif operation == 'mint':
             print 'MINTING\n'
             print ezid.mint(identifier, data)
