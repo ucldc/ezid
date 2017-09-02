@@ -6,7 +6,12 @@ Can use this as a client command line program or pull the EZIDClient object
 into other programs
 Following the samples from: https://ezid.cdlib.org/doc/apidoc.html
 '''
+from __future__ import print_function
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import range
+from builtins import object
 __author__ = "Mark Redar"
 __copyright__ = "Copyright 2011, The Regents of the University of California"
 __credits__ = ["Greg Janee", ]
@@ -19,7 +24,7 @@ __status__ = "Prototype"
 import re
 import sys
 import types
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 __all__=('EZIDClient', 'formatAnvlFromDict', 'formatAnvlFromList')
 
@@ -57,16 +62,6 @@ def _usageError ():
     sys.stderr.write(_usageText)
     sys.exit(1)
 
-class _MyHTTPErrorProcessor (urllib2.HTTPErrorProcessor):
-    def http_response (self, request, response):
-        # Bizarre that Python leaves this out.
-        if response.code == 201:
-            return response
-        else:
-            return urllib2.HTTPErrorProcessor.http_response(self, request,
-                response)
-    https_response = http_response
-
 def formatAnvlFromDict(d):
     '''Produce anvl formatted text from a dict of name value pairs.
     Values should be simple data types
@@ -75,7 +70,7 @@ def formatAnvlFromDict(d):
     'dc.creator: mer\\ndc.title: test title'
     '''
     r = []
-    for k, v in d.items():
+    for k, v in list(d.items()):
         label = re.sub("[%:\r\n]", lambda c: "%%%02X" % ord(c.group(0)), k)
         value = re.sub("[%\r\n]", lambda c: "%%%02X" % ord(c.group(0)), v)
         r.append("%s: %s" % (label, value))
@@ -107,22 +102,22 @@ class EZIDClient(object):
         ...
     HTTPError: HTTP Error 400: BAD REQUEST
     >>> info = ez.view('ark:/13030/c88s4n09')
-    >>> for x in info.split('\\n'):
-    ...     print x
-    success: ark:/13030/c88s4n09
-    _updated: 1319652711
-    dc.date: 1957
-    _target: http://content.cdlib.org/ark:/13030/c88s4n09/
-    _profile: dc
-    dc.publisher: San Jose State University Special Collections & Archives
-    _ownergroup: cdldsc
-    _owner: cdldsc
-    dc.creator: Wang Shifu
-    _export: yes
-    _created: 1302192449
-    _status: public
-    dc.title: "The Romance of the West Chamber," a Classic of Chinese Literature
-    <BLANKLINE>
+    >>> for x in info.split(b'\\n'):
+    ...     print(x)
+    b'success: ark:/13030/c88s4n09'
+    b'_updated: 1494867658'
+    b'_target: http://content.cdlib.org/ark:/13030/c88s4n09/'
+    b'_profile: dc'
+    b'dc.publisher: San Jose State University Special Collections & Archives'
+    b'_export: yes'
+    b'dc.date: 1957'
+    b'_owner: cdldsc'
+    b'dc.creator: Wang Shifu'
+    b'_ownergroup: cdldsc'
+    b'_created: 1302192449'
+    b'_status: unavailable'
+    b'dc.title: "The Romance of the West Chamber," a Classic of Chinese Literature'
+    b''
     >>> sid = ez.login()
     Traceback (most recent call last):
         ...
@@ -136,10 +131,10 @@ class EZIDClient(object):
         self._proxy = proxy # dict of http, https proxies
         proxy_handler = None
         if self._proxy:
-            proxy_handler = urllib2.ProxyHandler(self._proxy)
-            self._opener = urllib2.build_opener(proxy_handler, _MyHTTPErrorProcessor())
+            proxy_handler = urllib.request.ProxyHandler(self._proxy)
+            self._opener = urllib.request.build_opener(proxy_handler)
         else:
-            self._opener = urllib2.build_opener(_MyHTTPErrorProcessor())
+            self._opener = urllib.request.build_opener()
         self._server = server
         self._credentials = credentials # dict of username, password
         self._session_id = session_id
@@ -147,7 +142,7 @@ class EZIDClient(object):
         if self._session_id:
             self._cookie = "sessionid=" + session_id
         if self._credentials:
-            h = urllib2.HTTPBasicAuthHandler()
+            h = urllib.request.HTTPBasicAuthHandler()
             h.add_password("EZID", self._server, self._credentials['username'], self._credentials['password'])
             self._opener.add_handler(h)
 
@@ -165,11 +160,11 @@ class EZIDClient(object):
         if self._cookie: request.add_header("Cookie", self._cookie)
         try:
             c = self._opener.open(request)
-        except urllib2.HTTPError as e:
-            print  e.read()
+        except urllib.error.HTTPError as e:
+            print(e.read())
             raise
         output = c.read()
-        if not output.endswith("\n"): output += "\n"
+        if not output.endswith(b"\n"): output += "\n"
         if login:
             output = c.info()["set-cookie"].split(";")[0].split("=")[1]
         return output
@@ -179,27 +174,27 @@ class EZIDClient(object):
         for public ids.
         '''
         url = "%s/id/%s" % (self._server, identifier)
-        request = urllib2.Request(url)
+        request = urllib.request.Request(url)
         return self._get_request(request)
 
     def login(self):
         '''Login, caching session id
         '''
-        request = urllib2.Request("%s/%s" % (self._server, 'login'))
+        request = urllib.request.Request("%s/%s" % (self._server, 'login'))
         self.session_id = self._get_request(request, login=True)
         return self.session_id
 
     def logout(self):
         '''logout, caching session id
         '''
-        request = urllib2.Request("%s/%s" % (self._server, 'logout'))
+        request = urllib.request.Request("%s/%s" % (self._server, 'logout'))
         self.session_id = self._get_request(request)
         return self.session_id
 
     def update(self, identifier, data):
         if not self.session_id:
             self.session_id = self.login()
-        request = urllib2.Request("%s/id/%s" % (self._server, identifier))
+        request = urllib.request.Request("%s/id/%s" % (self._server, identifier))
         request.get_method = lambda: "POST"
         request.add_header("Content-Type", "text/plain; charset=UTF-8")
         request.add_data(formatAnvlFromDict(data).encode("UTF-8"))
@@ -208,7 +203,7 @@ class EZIDClient(object):
     def create(self, identifier, data=None):
         if not self.session_id:
             self.session_id = self.login()
-        request = urllib2.Request("%s/id/%s" % (self._server, identifier))
+        request = urllib.request.Request("%s/id/%s" % (self._server, identifier))
         request.get_method = lambda: "PUT"
         if data:
             request.add_header("Content-Type", "text/plain; charset=UTF-8")
@@ -220,7 +215,7 @@ class EZIDClient(object):
         '''
         if not self.session_id:
             self.session_id = self.login()
-        request = urllib2.Request("%s/shoulder/%s" % (self._server, shoulder))
+        request = urllib.request.Request("%s/shoulder/%s" % (self._server, shoulder))
         request.get_method = lambda: "POST"
         if data:
             request.add_header("Content-Type", "text/plain; charset=UTF-8")
@@ -230,7 +225,7 @@ class EZIDClient(object):
     def delete(self, identifier):
         if not self.session_id:
             self.session_id = self.login()
-        request = urllib2.Request("%s/id/%s" % (self._server, identifier))
+        request = urllib.request.Request("%s/id/%s" % (self._server, identifier))
         request.get_method = lambda: "DELETE"
         request.add_header("Content-Type", "text/plain; charset=UTF-8")
         return self._get_request(request)
@@ -271,23 +266,23 @@ def main(argvin=sys.argv):
     ezid = EZIDClient(SERVER, credentials=credentials, session_id=session_id)
     try:
         if operation == 'login':
-            print ezid.login()
+            print(ezid.login())
         elif operation == 'view':
-            print ezid.view(identifier)
+            print(ezid.view(identifier))
         elif operation == 'update':
             if data:
-                print ezid.update(identifier, data)
+                print(ezid.update(identifier, data))
         elif operation == 'delete':
-            print ezid.delete(identifier)
+            print(ezid.delete(identifier))
         elif operation == 'create':
-            print ezid.create(identifier, data)
+            print(ezid.create(identifier, data))
         elif operation == 'mint':
-            print 'MINTING\n'
-            print ezid.mint(identifier, data)
-    except urllib2.HTTPError, e:
-        print e.code, e.msg
+            print('MINTING\n')
+            print(ezid.mint(identifier, data))
+    except urllib.error.HTTPError as e:
+        print(e.code, e.msg)
         if e.fp:
-            print e.fp.read()
+            print(e.fp.read())
 
 if __name__=='__main__':
     main(sys.argv)

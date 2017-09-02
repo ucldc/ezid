@@ -1,6 +1,6 @@
-from distutils.core import setup
+from setuptools import setup
 
-version = '0.3'
+version = '0.4.0'
 
 setup(name='EZID',
       version=version,
@@ -10,6 +10,9 @@ setup(name='EZID',
       url="https://bitbucket.org/mredar/ezid",
       py_modules = ['EZID', 'DSC_EZID_minter'],
       scripts=['DSC_EZID_minter.py',],
+      install_requires=[
+          'future',
+      ],
       classifiers = [
           "Development Status :: 3 - Alpha",
           "Environment :: Console",
