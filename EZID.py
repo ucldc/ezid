@@ -25,6 +25,7 @@ import re
 import sys
 import types
 import urllib.request, urllib.error, urllib.parse
+import requests
 
 __all__=('EZIDClient', 'formatAnvlFromDict', 'formatAnvlFromList')
 
@@ -121,11 +122,11 @@ class EZIDClient(object):
     >>> sid = ez.login()
     Traceback (most recent call last):
         ...
-    HTTPError: HTTP Error 401: UNAUTHORIZED
+    HTTPError: 401 Client Error: UNAUTHORIZED for url: https://ezid.cdlib.org/login
     >>> ark = ez.mint('ark:/99999/fk4')
     Traceback (most recent call last):
         ...
-    HTTPError: HTTP Error 401: UNAUTHORIZED
+    HTTPError: 401 Client Error: UNAUTHORIZED for url: https://ezid.cdlib.org/login
     '''
     def __init__(self, server=SERVER, proxy=None, credentials=None, session_id=None):
         self._proxy = proxy # dict of http, https proxies
@@ -180,8 +181,15 @@ class EZIDClient(object):
     def login(self):
         '''Login, caching session id
         '''
-        request = urllib.request.Request("%s/%s" % (self._server, 'login'))
-        self.session_id = self._get_request(request, login=True)
+        url = "%s/%s" % (self._server, 'login')
+        auth = None
+        if self._credentials:
+            username = self._credentials.get('username', '')
+            password = self._credentials.get('password', '')
+            auth = (username, password)
+        res = requests.get(url, auth=auth)
+        res.raise_for_status()
+        self.session_id = res.headers.get('Set-Cookie').split(";")[0].split("=")[1]
         return self.session_id
 
     def logout(self):

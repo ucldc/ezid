@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = '0.4.0'
+version = '0.4.1'
 
 setup(name='EZID',
       version=version,
@@ -12,6 +12,7 @@ setup(name='EZID',
       scripts=['DSC_EZID_minter.py',],
       install_requires=[
           'future',
+          'requests',
       ],
       classifiers = [
           "Development Status :: 3 - Alpha",
