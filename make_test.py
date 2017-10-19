@@ -21,14 +21,9 @@ xml = schema40.tostring(metadata)
 
 resp = ez.mint('doi:10.5072/FK2', {'datacite':xml})
 print(resp)
-#resp = ez.mint('doi:10.5072/FK2',{'datacite.title': 'test title',
-#        'datacite.creator': 'mer','datacite.publisher':
-#        'CD','datacite.publicationyear':'2017','datacite.resourcetype':'Dataset'})
-#print(resp)
 doi = resp.split('|')[0].split()[0]#.decode('utf-8')
 print(doi)
 
-#print('doi:10.5072/FK2K64J47Z')
 resp = ez.update(doi,{'_target':"http://www.caltech.edu"})
 print(resp)
 
