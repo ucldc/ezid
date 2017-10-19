@@ -168,7 +168,7 @@ class EZIDClient(object):
         #if not output.endswith(b"\n"): output += "\n"
         if login:
             output = c.info()["set-cookie"].split(";")[0].split("=")[1]
-        return output
+        return output.decode("utf-8")
 
     def view(self, identifier):
         '''View an id. If id is public, no login or session id required

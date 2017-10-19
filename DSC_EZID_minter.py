@@ -46,12 +46,12 @@ def main(number, shoulder=None, username=None, password=None, verbose=False, met
         new_ids.append(ez)
         metadata['_target'] = 'http://content.cdlib.org/'+ez
         resp = ezid.update(ez, metadata)
-        print resp
+        print(res
         if verbose:
-            print ez
+            print(ez)
     return new_ids 
 
 if __name__=='__main__':
     new_ids = plac.call(main)
     for ez in new_ids:
-        print ez
+        print(ez)
