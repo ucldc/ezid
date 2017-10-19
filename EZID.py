@@ -165,10 +165,10 @@ class EZIDClient(object):
             print(e.read())
             raise
         output = c.read()
-        if not output.endswith(b"\n"): output += "\n"
+        #if not output.endswith(b"\n"): output += "\n"
         if login:
             output = c.info()["set-cookie"].split(";")[0].split("=")[1]
-        return output
+        return output.decode("utf-8")
 
     def view(self, identifier):
         '''View an id. If id is public, no login or session id required
@@ -205,7 +205,7 @@ class EZIDClient(object):
         request = urllib.request.Request("%s/id/%s" % (self._server, identifier))
         request.get_method = lambda: "POST"
         request.add_header("Content-Type", "text/plain; charset=UTF-8")
-        request.add_data(formatAnvlFromDict(data).encode("UTF-8"))
+        request.data = formatAnvlFromDict(data).encode("UTF-8")
         return self._get_request(request)
 
     def create(self, identifier, data=None):
@@ -215,7 +215,7 @@ class EZIDClient(object):
         request.get_method = lambda: "PUT"
         if data:
             request.add_header("Content-Type", "text/plain; charset=UTF-8")
-            request.add_data(formatAnvlFromDict(data).encode("UTF-8"))
+            request.data = formatAnvlFromDict(data).encode("UTF-8")
         return self._get_request(request)
 
     def mint(self, shoulder, data=None):
@@ -227,7 +227,7 @@ class EZIDClient(object):
         request.get_method = lambda: "POST"
         if data:
             request.add_header("Content-Type", "text/plain; charset=UTF-8")
-            request.add_data(formatAnvlFromDict(data).encode("UTF-8"))
+            request.data = formatAnvlFromDict(data).encode("UTF-8")
         return self._get_request(request).replace('success: ','').strip()
 
     def delete(self, identifier):

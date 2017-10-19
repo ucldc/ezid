@@ -13,6 +13,7 @@ setup(name='EZID',
       install_requires=[
           'future',
           'requests',
+          'datacite'
       ],
       classifiers = [
           "Development Status :: 3 - Alpha",
