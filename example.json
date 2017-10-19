@@ -116,10 +116,6 @@
     "titles": [
         {
             "title": "Title"
-        },
-        {
-            "title": "Alternative Title",
-            "titleType": "AlternativeTitle"
         }
     ],
     "version": "0"
