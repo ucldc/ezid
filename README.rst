@@ -2,6 +2,8 @@
 EZID Python Client
 ==================
 
+.. image:: https://travis-ci.org/ucldc/ezid.svg?branch=master
+
 ============================
 NOT AN OFFICIAL EZID PROJECT
 ============================
