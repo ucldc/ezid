@@ -3,6 +3,7 @@ EZID Python Client
 ==================
 
 .. image:: https://travis-ci.org/ucldc/ezid.svg?branch=master
+  :target: https://travis-ci.org/ucldc/ezid
 
 ============================
 NOT AN OFFICIAL EZID PROJECT
